@@ -1,1 +1,1 @@
-# Deart-Disease-Analysis
+# Heart-Disease-Analysis
