@@ -44,7 +44,7 @@ def Hasta_Cinsiyet_Dagilim(p_df):
 def Yas_Dagilimi(p_df,p_sick_status):
     plt_title="Veri Seti Yaş Dağılımı"
     if p_sick_status==True:
-        p_df=p_df[p_df["target"]==0]
+        p_df=p_df[p_df["target"]==1]
         plt_title="Hasta Yaş Dağılımı"
     age_distribution=[]
     age_distribution.append(len(p_df[p_df["age"]<30]))
@@ -70,7 +70,11 @@ def Data_Preprocess(p_df):
     features=df.drop(["target"],axis=1)
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.20, random_state=256)
     return X_train, X_test, y_train, y_test
-
+#7-Logistic Regresyon kullanarak veri setini sınıflandırın
+#8- K-NN kullanarak veri setini sınıflandırın
+#9- Naive Bayes kullanarak veri setini sınıflandırın
+#10- Karar ağaçları kullanarak veri setini sınıflandırın
+#(Sonucun karmaşıklık matrisini çizdirin, bu matrise göre Accuracy, Sensitivity, Specificity, Recall, Precision değerlendirme kriterlerini hesaplayın.)
 def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
     if p_option=="Logistic":
         model=LogisticRegression()
@@ -96,7 +100,6 @@ def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
     tick_marks = np.arange(len(labels))
     plt.xticks(tick_marks, labels)
     plt.yticks(tick_marks, labels)
-    # create heatmap for confusion matrix
     sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
     ax.xaxis.set_label_position("bottom")
     title=p_option+' Confusion matrix'
@@ -118,6 +121,7 @@ if __name__=="__main__":
     df=pd.read_csv('data.csv')
     #Hasta_Dagilim(df)
     #Hasta_Cinsiyet_Dagilim(df)
+    #Yas_Dagilimi(df,True)
     X_train, X_test, y_train, y_test=Data_Preprocess(df)
     data=[X_train, X_test, y_train, y_test]
     Classifier(*data,"DecisionTree")
