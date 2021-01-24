@@ -71,72 +71,23 @@ def Data_Preprocess(p_df):
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.20, random_state=256)
     return X_train, X_test, y_train, y_test
 
-#7- Logistic Regresyon kullanarak veri setini sınıflandırın
-#(Sonucun karmaşıklık matrisini çizdirin, bu matrise göre Accuracy, Sensitivity, Specificity, Recall, Precision değerlendirme kriterlerini hesaplayın.) 
-def Logistic(p_trainX,p_testX,p_trainY,p_testY):
-    model=LogisticRegression()
-    model.fit(p_trainX,p_trainY)
-    y_pred = pd.Series(model.predict(p_testX))
-
-    cnf_matrix=metrics.confusion_matrix(p_testY,y_pred)
-    labels = [0, 1]
-    fig, ax = plt.subplots()
-    tick_marks = np.arange(len(labels))
-    plt.xticks(tick_marks, labels)
-    plt.yticks(tick_marks, labels)
-    # create heatmap for confusion matrix
-    sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
-    ax.xaxis.set_label_position("bottom")
-    plt.title('Confusion matrix')
-    plt.ylabel('True')
-    plt.xlabel('Predicted')
-
-    sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
-    specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
-
-    print("Accuracy:", metrics.accuracy_score(p_testY, y_pred))
-    print("Sensitivity:",sensitivity)
-    print("Specificity:",specificity)
-    print("Recall:", metrics.recall_score(p_testY, y_pred))
-    print("Precision:", metrics.precision_score(p_testY, y_pred))    
-    plt.show()
-
-#8- K-NN kullanarak veri setini sınıflandırın
-#(Sonucun karmaşıklık matrisini çizdirin, bu matrise göre Accuracy, Sensitivity, Specificity, Recall, Precision değerlendirme kriterlerini hesaplayın.)
-def Knn(p_trainX,p_testX,p_trainY,p_testY):
-    model=KNeighborsClassifier(n_neighbors=5)
-    model.fit(p_trainX,p_trainY)
-    y_pred=model.predict(X_test)
-
-    cnf_matrix=metrics.confusion_matrix(p_testY,y_pred)
-    labels = [0, 1]
-    fig, ax = plt.subplots()
-    tick_marks = np.arange(len(labels))
-    plt.xticks(tick_marks, labels)
-    plt.yticks(tick_marks, labels)
-    # create heatmap for confusion matrix
-    sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
-    ax.xaxis.set_label_position("bottom")
-    plt.title('Confusion matrix')
-    plt.ylabel('True')
-    plt.xlabel('Predicted')
-
-    sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
-    specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
-
-    print("Accuracy:", metrics.accuracy_score(p_testY, y_pred))
-    print("Sensitivity:",sensitivity)
-    print("Specificity:",specificity)
-    print("Recall:", metrics.recall_score(p_testY, y_pred))
-    print("Precision:", metrics.precision_score(p_testY, y_pred))    
-    plt.show()
-
-#9- Naive Bayes kullanarak veri setini sınıflandırın
-#(Sonucun karmaşıklık matrisini çizdirin, bu matrise göre Accuracy, Sensitivity, Specificity, Recall, Precision değerlendirme kriterlerini hesaplayın.)
-def NaiveBayes(p_trainX,p_testX,p_trainY,p_testY):
-    model=GaussianNB()
-    model.fit(p_trainX,p_trainY)
-    y_pred=model.predict(X_test)
+def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
+    if p_option=="Logistic":
+        model=LogisticRegression()
+        model.fit(p_trainX,p_trainY)
+        y_pred = pd.Series(model.predict(p_testX))
+    elif p_option=="KNN":
+        model=KNeighborsClassifier(n_neighbors=5)
+        model.fit(p_trainX,p_trainY)
+        y_pred=model.predict(X_test)
+    elif p_option=="NaiveBayes":
+        model=GaussianNB()
+        model.fit(p_trainX,p_trainY)
+        y_pred=model.predict(X_test)
+    elif p_option=="DecisionTree":
+        model=DecisionTreeClassifier()
+        model.fit(p_trainX,p_trainY)
+        y_pred=model.predict(X_test)
 
 
     cnf_matrix=metrics.confusion_matrix(p_testY,y_pred)
@@ -148,53 +99,25 @@ def NaiveBayes(p_trainX,p_testX,p_trainY,p_testY):
     # create heatmap for confusion matrix
     sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
     ax.xaxis.set_label_position("bottom")
-    plt.title('Confusion matrix')
+    title=p_option+' Confusion matrix'
+    plt.title(title)
     plt.ylabel('True')
     plt.xlabel('Predicted')
 
     sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
     specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
 
-    print("Accuracy:", metrics.accuracy_score(p_testY, y_pred))
-    print("Sensitivity:",sensitivity)
-    print("Specificity:",specificity)
-    print("Recall:", metrics.recall_score(p_testY, y_pred))
-    print("Precision:", metrics.precision_score(p_testY, y_pred))    
+    print(p_option," Accuracy:", metrics.accuracy_score(p_testY, y_pred))
+    print(p_option," Sensitivity:",sensitivity)
+    print(p_option," Specificity:",specificity)
+    print(p_option," Recall:", metrics.recall_score(p_testY, y_pred))
+    print(p_option," Precision:", metrics.precision_score(p_testY, y_pred))    
     plt.show()
-
-#10- Karar ağaçları kullanarak veri setini sınıflandırın
-#(Sonucun karmaşıklık matrisini çizdirin, bu matrise göre Accuracy, Sensitivity, Specificity, Recall, Precision değerlendirme kriterlerini hesaplayın.)
-def Decision_Tree(p_trainX,p_testX,p_trainY,p_testY):
-    model=DecisionTreeClassifier()
-    model.fit(p_trainX,p_trainY)
-    y_pred=model.predict(X_test)
-
-
-    cnf_matrix=metrics.confusion_matrix(p_testY,y_pred)
-    labels = [0, 1]
-    fig, ax = plt.subplots()
-    tick_marks = np.arange(len(labels))
-    plt.xticks(tick_marks, labels)
-    plt.yticks(tick_marks, labels)
-    # create heatmap for confusion matrix
-    sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
-    ax.xaxis.set_label_position("bottom")
-    plt.title('Confusion matrix')
-    plt.ylabel('True')
-    plt.xlabel('Predicted')
-
-    sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
-    specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
-
-    print("Accuracy:", metrics.accuracy_score(p_testY, y_pred))
-    print("Sensitivity:",sensitivity)
-    print("Specificity:",specificity)
-    print("Recall:", metrics.recall_score(p_testY, y_pred))
-    print("Precision:", metrics.precision_score(p_testY, y_pred))    
-    plt.show()
-  
+    
 if __name__=="__main__":
     df=pd.read_csv('data.csv')
     #Hasta_Dagilim(df)
     #Hasta_Cinsiyet_Dagilim(df)
     X_train, X_test, y_train, y_test=Data_Preprocess(df)
+    data=[X_train, X_test, y_train, y_test]
+    Classifier(*data,"DecisionTree")
