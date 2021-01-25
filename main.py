@@ -88,7 +88,7 @@ def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
         model=GaussianNB()
     elif p_option=="DecisionTree":
         model=DecisionTreeClassifier()
-                
+
     model.fit(p_trainX,p_trainY)
     y_pred=model.predict(X_test)
     cnf_matrix=metrics.confusion_matrix(p_testY,y_pred)
@@ -104,15 +104,19 @@ def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
     plt.ylabel('True')
     plt.xlabel('Predicted')
 
+    accuracy=metrics.accuracy_score(p_testY, y_pred)
     sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
     specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
+    recall=metrics.recall_score(p_testY, y_pred)
+    precision=metrics.precision_score(p_testY, y_pred)
 
-    print(p_option," Accuracy:", metrics.accuracy_score(p_testY, y_pred))
+    print(p_option," Accuracy:", accuracy)
     print(p_option," Sensitivity:",sensitivity)
     print(p_option," Specificity:",specificity)
-    print(p_option," Recall:", metrics.recall_score(p_testY, y_pred))
-    print(p_option," Precision:", metrics.precision_score(p_testY, y_pred))    
+    print(p_option," Recall:", recall)
+    print(p_option," Precision:", precision)    
     plt.show()
+    return (accuracy,sensitivity,specificity,recall,precision)
 
 #11- Yapay Sinir Ağları kullanarak veri setini sınıflandırın
 #(Sonucun karmaşıklık matrisini çizdirin, bu matrise göre Accuracy, Sensitivity, Specificity, Recall, Precision değerlendirme kriterlerini hesaplayın.)
@@ -149,15 +153,34 @@ def Neural(p_trainX,p_testX,p_trainY,p_testY):
     plt.ylabel('True')
     plt.xlabel('Predicted')
 
+    accuracy=metrics.accuracy_score(dummy_y, y_pred)
     sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
     specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
+    recall=metrics.recall_score(dummy_y, y_pred)
+    precision=metrics.precision_score(dummy_y, y_pred)
 
-    print("NN Accuracy:", metrics.accuracy_score(dummy_y, y_pred))
+    print("NN Accuracy:", accuracy)
     print("NN Sensitivity:",sensitivity)
     print("NN Specificity:",specificity)
-    print("NN Recall:", metrics.recall_score(dummy_y, y_pred))
-    print("NN Precision:", metrics.precision_score(dummy_y, y_pred))   
+    print("NN Recall:", recall)
+    print("NN Precision:", precision)   
     plt.show()
+    return (accuracy,sensitivity,specificity,recall,precision)
+
+def Plot(p_values):
+    '''
+    labels=["Accuracy","Sensitivity","Specificity","Recall","Precision"]
+    y_pos = np.arange(len(labels))
+    plt.bar(y_pos,p_values, align='center', alpha=0.5,color=["orange","blue","red","purple","yellow"])
+    plt.xticks(y_pos, labels)
+    plt.title("asdas")
+    plt.show()
+    #pd.crosstab(p_values[0],p_values[1],p_values[2],p_values[3],p_values[4]).plot(kind="bar",figsize=(15,6))
+    '''
+    df=pd.DataFrame(p_values,index=["accuracy","sensitivity","specificity","recall","precision"],columns=["Logistic","KNN","NaiveBayes","DecisionTree","NeuralNet"])
+    print(df)
+
+    
 
 if __name__=="__main__":
     df=pd.read_csv('data.csv')
@@ -166,5 +189,10 @@ if __name__=="__main__":
     #Yas_Dagilimi(df,True)
     X_train, X_test, y_train, y_test=Data_Preprocess(df)
     data=[X_train, X_test, y_train, y_test]
-    Classifier(*data,"KNN")
-    #Neural(*data)
+    metric_values=[]
+    metric_values.append(Classifier(*data,"Logistic"))
+    metric_values.append(Classifier(*data,"KNN"))
+    metric_values.append(Classifier(*data,"NaiveBayes"))
+    metric_values.append(Classifier(*data,"DecisionTree"))
+    metric_values.append(Neural(*data))
+    Plot(metric_values)
