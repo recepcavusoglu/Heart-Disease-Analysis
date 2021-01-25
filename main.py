@@ -82,21 +82,15 @@ def Data_Preprocess(p_df):
 def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
     if p_option=="Logistic":
         model=LogisticRegression()
-        model.fit(p_trainX,p_trainY)
-        y_pred = pd.Series(model.predict(p_testX))
     elif p_option=="KNN":
         model=KNeighborsClassifier(n_neighbors=5)
-        model.fit(p_trainX,p_trainY)
-        y_pred=model.predict(X_test)
     elif p_option=="NaiveBayes":
         model=GaussianNB()
-        model.fit(p_trainX,p_trainY)
-        y_pred=model.predict(X_test)
     elif p_option=="DecisionTree":
         model=DecisionTreeClassifier()
-        model.fit(p_trainX,p_trainY)
-        y_pred=model.predict(X_test)
-
+                
+    model.fit(p_trainX,p_trainY)
+    y_pred=model.predict(X_test)
     cnf_matrix=metrics.confusion_matrix(p_testY,y_pred)
     labels = [0, 1]
     fig, ax = plt.subplots()
@@ -172,5 +166,5 @@ if __name__=="__main__":
     #Yas_Dagilimi(df,True)
     X_train, X_test, y_train, y_test=Data_Preprocess(df)
     data=[X_train, X_test, y_train, y_test]
-    #Classifier(*data,"DecisionTree")
+    Classifier(*data,"KNN")
     #Neural(*data)
