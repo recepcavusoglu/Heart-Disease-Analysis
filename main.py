@@ -18,27 +18,33 @@ def Hasta_Dagilim(p_df):
     status=[0,0]
     status[0]=len(p_df[p_df["target"]==1])
     status[1]=len(p_df)-status[0]
+    text="Hasta Sayısı: "+str(status[0])+" | Sağlam Sayısı: "+str(status[1])
     labels=['Hasta','Hasta Değil']
     y_pos = np.arange(len(labels))
     plt.bar(y_pos, status, align='center', alpha=0.5,color=['red','blue'])
     plt.xticks(y_pos, labels)
     plt.title('Hastalık Dağılımı')
+    plt.figtext(0.5, 0.01, text, ha="center", fontsize=10,bbox={"facecolor":"white","alpha":0.5, "pad":5})
     plt.show()
 
 #2- Cinsiyete göre hasta ve sağlıklı hasta sayıları sütun grafiği ile ifade ediniz. 
 def Hasta_Cinsiyet_Dagilim(p_df):
-    
     male_count=len(p_df[p_df["sex"]==1])
     sick_male_count=len(p_df[(p_df["sex"]==1)&(p_df["target"]==1)])
     female_count=len(p_df[p_df["sex"]==0])
     sick_female_count=len(p_df[(p_df["sex"]==0)&(p_df["target"]==1)])
     #sick_male,healty_male,sick_female,healty_female
-    status=[sick_male_count,male_count-sick_male_count,sick_female_count,female_count-sick_female_count]
+    status=[sick_male_count,male_count-sick_male_count,sick_female_count,female_count-sick_female_count]    
     labels=['Erkek Hasta','Erkek Sağlıklı','Kadın Hasta','Kadın Sağlıklı']
+    text=""
+    for i in range(len(labels)):
+        text+=str(labels[i])+": "+str(status[i])+" | "
+    text=text[:-2]
     y_pos = np.arange(len(labels))
     plt.bar(y_pos, status, align='center', alpha=0.5,color=['red','blue','red','blue'])
     plt.xticks(y_pos, labels)
     plt.title('Hastalık Cinsiyet Dağılımı')
+    plt.figtext(0.5, 0.01, text, ha="center", fontsize=10,bbox={"facecolor":"white","alpha":0.5, "pad":5})
     plt.show()
 
 #3- Veri setindekilerin yaş dağılımını gösteren bir sütun grafiği çizdirin.
@@ -57,10 +63,15 @@ def Yas_Dagilimi(p_df,p_sick_status):
     age_distribution.append(len(p_df[(p_df["age"]>=60)&(p_df["age"]<70)]))
     age_distribution.append(len(p_df[p_df["age"]>70]))
     labels=["0-29","30-39","40-49","50-59","60-69","70+"]
+    text=""
+    for i in range(len(labels)):
+        text+=str(labels[i])+": "+str(age_distribution[i])+" | "
+    text=text[:-2]
     y_pos = np.arange(len(labels))
     plt.bar(y_pos, age_distribution, align='center', alpha=0.5)
     plt.xticks(y_pos, labels)
     plt.title(plt_title)
+    plt.figtext(0.5, 0.01, text, ha="center", fontsize=10,bbox={"facecolor":"white","alpha":0.5, "pad":5})
     plt.show()
 
 #5- Veri setini sınıflandırma işlemi için hazırlayınız(Özelliklerin ölçeklenmesi, kategorik veri var ise nümerik hale getirilmesi, özelliklerin ve çıktının değişkenlere aktarılması)
