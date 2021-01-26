@@ -212,6 +212,7 @@ if __name__=="__main__":
 
     Hasta_Dagilim(df)
     Hasta_Cinsiyet_Dagilim(df)
+    Yas_Dagilimi(df,False)
     Yas_Dagilimi(df,True)
 
     X_train, X_test, y_train, y_test=Data_Preprocess(df)
