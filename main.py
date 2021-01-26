@@ -57,10 +57,8 @@ def Yas_Dagilimi(p_df,p_sick_status):
         plt_title="Hasta Yaş Dağılımı"
     age_distribution=[]
     age_distribution.append(len(p_df[p_df["age"]<30]))
-    age_distribution.append(len(p_df[(p_df["age"]>=30)&(p_df["age"]<40)]))
-    age_distribution.append(len(p_df[(p_df["age"]>=40)&(p_df["age"]<50)]))
-    age_distribution.append(len(p_df[(p_df["age"]>=50)&(p_df["age"]<60)]))
-    age_distribution.append(len(p_df[(p_df["age"]>=60)&(p_df["age"]<70)]))
+    for i in range(30,70,10):
+        age_distribution.append(len(p_df[(p_df["age"]>=i)&(p_df["age"]<i+10)]))
     age_distribution.append(len(p_df[p_df["age"]>70]))
     labels=["0-29","30-39","40-49","50-59","60-69","70+"]
     text=""
