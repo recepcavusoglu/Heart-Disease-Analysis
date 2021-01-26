@@ -59,7 +59,7 @@ def Yas_Dagilimi(p_df,p_sick_status):
     age_distribution.append(len(p_df[p_df["age"]<30]))
     for i in range(30,70,10):
         age_distribution.append(len(p_df[(p_df["age"]>=i)&(p_df["age"]<i+10)]))
-    age_distribution.append(len(p_df[p_df["age"]>70]))
+    age_distribution.append(len(p_df[p_df["age"]>=70]))
     labels=["0-29","30-39","40-49","50-59","60-69","70+"]
     text=""
     for i in range(len(labels)):
@@ -97,6 +97,8 @@ def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
         model=GaussianNB()
     elif p_option=="DecisionTree":
         model=DecisionTreeClassifier()
+    elif p_option=="NeuralNet":
+        return Neural(p_trainX,p_testX,p_trainY,p_testY)      
 
     model.fit(p_trainX,p_trainY)
     y_pred=model.predict(X_test)
@@ -113,11 +115,15 @@ def Classifier(p_trainX,p_testX,p_trainY,p_testY,p_option):
     plt.ylabel('True')
     plt.xlabel('Predicted')
 
-    accuracy=metrics.accuracy_score(p_testY, y_pred)
-    sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
-    specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
-    recall=metrics.recall_score(p_testY, y_pred)
-    precision=metrics.precision_score(p_testY, y_pred)
+    TP=cnf_matrix[0][0]
+    FP=cnf_matrix[0][1]
+    FN=cnf_matrix[1][0]
+    TN=cnf_matrix[1][1]
+    accuracy=(TP+TN)/(TP+FP+TN+FN)
+    sensitivity=TP/(TP+FN)
+    specificity=TN/(TN+FP)
+    recall=sensitivity
+    precision=TP/(TP+FP)
 
     print(p_option," Accuracy:", accuracy)
     print(p_option," Sensitivity:",sensitivity)
@@ -162,11 +168,15 @@ def Neural(p_trainX,p_testX,p_trainY,p_testY):
     plt.ylabel('True')
     plt.xlabel('Predicted')
 
-    accuracy=metrics.accuracy_score(dummy_y, y_pred)
-    sensitivity=(cnf_matrix[1][1]/float(cnf_matrix[1][1]+cnf_matrix[1][0]))
-    specificity=(cnf_matrix[0][0]/float(cnf_matrix[0][0]+cnf_matrix[0][1]))
-    recall=metrics.recall_score(dummy_y, y_pred)
-    precision=metrics.precision_score(dummy_y, y_pred)
+    TP=cnf_matrix[0][0]
+    FP=cnf_matrix[0][1]
+    FN=cnf_matrix[1][0]
+    TN=cnf_matrix[1][1]
+    accuracy=(TP+TN)/(TP+FP+TN+FN)
+    sensitivity=TP/(TP+FN)
+    specificity=TN/(TN+FP)
+    recall=sensitivity
+    precision=TP/(TP+FP)
 
     print("NN Accuracy:", accuracy)
     print("NN Sensitivity:",sensitivity)
@@ -176,17 +186,25 @@ def Neural(p_trainX,p_testX,p_trainY,p_testY):
     plt.show()
     return (accuracy,sensitivity,specificity,recall,precision)
 
-def Plot(p_values):
-    index=["Accuracy","Sensitivity","Specificity","Recall","Precision"]
+def Plot(p_values,p_metric):
+    if p_metric=="f1":
+        f1=[]
+        for i in p_values:
+            f1.append((2*i[4]*i[3])/i[4]+i[3])
+        index=["f1"]
+        p_values=f1
+    else:
+        index=["Accuracy","Sensitivity","Specificity","Recall","Precision"]
     columns=["Logistic","KNN","NaiveBayes","DecisionTree","NeuralNet"]
     df=pd.DataFrame(np.column_stack(p_values),index=index,columns=columns)
     print(df)
     
     ypos=np.arange(len(columns))
     plt.xticks(ypos,columns)
-    plt.ylabel("Accuracy Değerleri")
-    plt.title("Accuracy")
-    plt.bar(ypos,df.loc['Accuracy'].values,align='center', alpha=0.5,color=['red','blue','orange','purple','green'])
+    label=p_metric+" Değerleri"
+    plt.ylabel(label)
+    plt.title(p_metric)
+    plt.bar(ypos,df.loc[p_metric].values,align='center', alpha=0.5,color=['red','blue','orange','purple','green'])
     plt.show()
 
 if __name__=="__main__":
@@ -204,6 +222,11 @@ if __name__=="__main__":
     metric_values.append(Classifier(*data,"KNN"))
     metric_values.append(Classifier(*data,"NaiveBayes"))
     metric_values.append(Classifier(*data,"DecisionTree"))
-    metric_values.append(Neural(*data))
+    metric_values.append(Classifier(*data,"NeuralNet"))
     
-    Plot(metric_values)
+    Plot(metric_values,"Accuracy")
+    Plot(metric_values,"Sensitivity")
+    Plot(metric_values,"Specificity")
+    Plot(metric_values,"Recall")
+    Plot(metric_values,"Precision")
+    Plot(metric_values,"f1")
