@@ -190,7 +190,7 @@ def Plot(p_values,p_metric):
     if p_metric=="f1":
         f1=[]
         for i in p_values:
-            f1.append((2*i[4]*i[3])/i[4]+i[3])
+            f1.append((2*i[4]*i[3])/(i[4]+i[3]))
         index=["f1"]
         p_values=f1
     else:
