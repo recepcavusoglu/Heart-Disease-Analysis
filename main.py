@@ -168,31 +168,33 @@ def Neural(p_trainX,p_testX,p_trainY,p_testY):
     return (accuracy,sensitivity,specificity,recall,precision)
 
 def Plot(p_values):
-    '''
-    labels=["Accuracy","Sensitivity","Specificity","Recall","Precision"]
-    y_pos = np.arange(len(labels))
-    plt.bar(y_pos,p_values, align='center', alpha=0.5,color=["orange","blue","red","purple","yellow"])
-    plt.xticks(y_pos, labels)
-    plt.title("asdas")
-    plt.show()
-    #pd.crosstab(p_values[0],p_values[1],p_values[2],p_values[3],p_values[4]).plot(kind="bar",figsize=(15,6))
-    '''
-    df=pd.DataFrame(p_values,index=["accuracy","sensitivity","specificity","recall","precision"],columns=["Logistic","KNN","NaiveBayes","DecisionTree","NeuralNet"])
+    index=["Accuracy","Sensitivity","Specificity","Recall","Precision"]
+    columns=["Logistic","KNN","NaiveBayes","DecisionTree","NeuralNet"]
+    df=pd.DataFrame(np.column_stack(p_values),index=index,columns=columns)
     print(df)
-
     
+    ypos=np.arange(len(columns))
+    plt.xticks(ypos,columns)
+    plt.ylabel("Accuracy Değerleri")
+    plt.title("Accuracy")
+    plt.bar(ypos,df.loc['Accuracy'].values,align='center', alpha=0.5,color=['red','blue','orange','purple','green'])
+    plt.show()
 
 if __name__=="__main__":
     df=pd.read_csv('data.csv')
-    #Hasta_Dagilim(df)
-    #Hasta_Cinsiyet_Dagilim(df)
-    #Yas_Dagilimi(df,True)
+
+    Hasta_Dagilim(df)
+    Hasta_Cinsiyet_Dagilim(df)
+    Yas_Dagilimi(df,True)
+
     X_train, X_test, y_train, y_test=Data_Preprocess(df)
     data=[X_train, X_test, y_train, y_test]
+
     metric_values=[]
     metric_values.append(Classifier(*data,"Logistic"))
     metric_values.append(Classifier(*data,"KNN"))
     metric_values.append(Classifier(*data,"NaiveBayes"))
     metric_values.append(Classifier(*data,"DecisionTree"))
     metric_values.append(Neural(*data))
+    
     Plot(metric_values)
